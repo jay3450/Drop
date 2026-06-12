@@ -208,40 +208,22 @@ async function fetchLyricsApi(artist: string, title: string) {
 
 async function fetchChartPage(): Promise<Track[]> {
   try {
-    // Fetch Global and India charts in parallel to cut loading speed in half
-    const [resGlobal, resIndia] = await Promise.all([
-      fetch('https://itunes.apple.com/us/rss/topsongs/limit=50/json'),
-      fetch('https://itunes.apple.com/in/rss/topsongs/limit=50/json')
-    ]);
-
-    let globalEntries: any[] = [];
-    if (resGlobal.ok) {
-      const json = await resGlobal.json();
-      globalEntries = json.feed?.entry || [];
-    }
-
+    // Fetch top 200 India chart songs directly
+    const resIndia = await fetch('https://itunes.apple.com/in/rss/topsongs/limit=200/json');
     let indiaEntries: any[] = [];
     if (resIndia.ok) {
       const json = await resIndia.json();
       indiaEntries = json.feed?.entry || [];
     }
 
-    // Merge US and India charts by alternating
-    const mergedEntries = [];
-    const maxLen = Math.max(globalEntries.length, indiaEntries.length);
-    for (let i = 0; i < maxLen; i++) {
-      if (globalEntries[i]) mergedEntries.push(globalEntries[i]);
-      if (indiaEntries[i]) mergedEntries.push(indiaEntries[i]);
-    }
-
-    // Curation filter: limit any single artist/creator to at most 2 tracks in the top feed to keep it mixed
+    // Curation filter: limit any single artist to at most 3 tracks in the top feed to keep it diverse
     const artistCounts: Record<string, number> = {};
     const diverseEntries: any[] = [];
-    for (const entry of mergedEntries) {
+    for (const entry of indiaEntries) {
       const artist = (entry['im:artist']?.label || '').trim().toLowerCase();
       const primaryArtist = artist.split(',')[0]!.split('&')[0]!.split('feat.')[0]!.trim();
       artistCounts[primaryArtist] = (artistCounts[primaryArtist] || 0) + 1;
-      if (artistCounts[primaryArtist] <= 2) {
+      if (artistCounts[primaryArtist] <= 3) {
         diverseEntries.push(entry);
       }
     }
@@ -267,10 +249,33 @@ async function fetchChartPage(): Promise<Track[]> {
       };
     }).filter((t: Track) => !!t.src);
   } catch (e) {
-    console.error('Error fetching charts:', e);
+    console.error('Error fetching India charts:', e);
     return [];
   }
 }
+
+const INDIAN_SEARCH_QUERIES = [
+  'Bollywood Hits',
+  'Arijit Singh',
+  'Diljit Dosanjh',
+  'Sidhu Moose Wala',
+  'Pritam',
+  'Punjabi Hits',
+  'Anirudh Ravichander',
+  'A.R. Rahman',
+  'Lata Mangeshkar',
+  'Shreya Ghoshal',
+  'Indian Pop',
+  'Telugu Hits',
+  'Tamil Hits',
+  'Badshah',
+  'Divine',
+  'Karan Aujla',
+  'Amit Trivedi',
+  'Neha Kakkar',
+  'Jubin Nautiyal',
+  'Vishal-Shekhar'
+];
 
 function useDeezerCharts() {
   // Read from localStorage cache immediately to eliminate loading delay on reload
@@ -305,6 +310,7 @@ function useDeezerCharts() {
   const [loadingMore, setMore] = useState(false);
   const [error] = useState<string | null>(null);
   const [hasMore] = useState(true);
+  const [queryIndex, setQueryIndex] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -327,13 +333,51 @@ function useDeezerCharts() {
   }, []);
 
   const loadMore = useCallback(async () => {
-    if (baseTracks.length === 0) return;
+    if (loadingMore) return;
     setMore(true);
-    // Shuffle baseTracks to make the next batch feel fresh
-    const shuffled = [...baseTracks].sort(() => Math.random() - 0.5);
-    setTracks(prev => [...prev, ...shuffled]);
-    setMore(false);
-  }, [baseTracks]);
+
+    try {
+      // Pick next Indian query from list
+      const query = INDIAN_SEARCH_QUERIES[queryIndex % INDIAN_SEARCH_QUERIES.length] || 'Bollywood';
+      setQueryIndex(prev => prev + 1);
+
+      // Search iTunes API for new Indian tracks
+      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&country=IN&limit=30`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.results) {
+          const formatted: Track[] = json.results
+            .filter((t: any) => !!t.previewUrl)
+            .map((t: any) => {
+              let coverUrl = t.artworkUrl100 || '';
+              if (coverUrl) {
+                coverUrl = coverUrl.replace('100x100bb.jpg', '500x500bb.jpg');
+              }
+              return {
+                title: t.trackName,
+                artist: t.artistName,
+                album: t.collectionName,
+                cover: coverUrl,
+                src: t.previewUrl,
+              };
+            });
+
+          if (formatted.length > 0) {
+            setTracks(prev => {
+              // Deduplicate tracks by src URL
+              const existingSrcs = new Set(prev.map(t => t.src));
+              const newUnique = formatted.filter(t => !existingSrcs.has(t.src));
+              return [...prev, ...newUnique];
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error loading more Indian tracks:', e);
+    } finally {
+      setMore(false);
+    }
+  }, [queryIndex, loadingMore]);
 
   return { tracks, initialLoading, loadingMore, error, loadMore, hasMore };
 }
