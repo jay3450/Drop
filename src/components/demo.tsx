@@ -115,14 +115,12 @@ function generateAestheticMockLyrics(title: string, artist: string) {
   const selectedLines = lyricSets[setIndex] || lyricSets[0]!;
 
   return [
-    { text: `✨ Now Playing: ${title}`, start: 0, end: 3 },
-    { text: `🎙️ Artist: ${artist}`, start: 3, end: 6 },
     ...selectedLines.map((line, i) => ({
       text: line,
-      start: 6 + i * 4,
-      end: 6 + (i + 1) * 4
+      start: i * 4,
+      end: (i + 1) * 4
     })),
-    { text: "🎵 Double-tap to save this loop", start: 6 + selectedLines.length * 4, end: 6 + selectedLines.length * 4 + 4 }
+    { text: "🎵 Double-tap to save this loop", start: selectedLines.length * 4, end: selectedLines.length * 4 + 4 }
   ];
 }
 
