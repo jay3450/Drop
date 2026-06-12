@@ -74,11 +74,13 @@ body {
   height: 600px;
   filter: blur(80px);
   opacity: 0.6;
-  animation: morph 18s ease-in-out infinite alternate;
+  animation: morph 20s ease-in-out infinite alternate;
   z-index: 0;
   pointer-events: none;
   border-radius: 50%;
   transform-origin: center;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .orb-crimson {
@@ -91,23 +93,19 @@ body {
 
 /* Easing specification keyframes */
 
-/* 1. Orb morphing animation */
+/* 1. Orb morphing animation (Optimized: Transform-only to run entirely on GPU) */
 @keyframes morph {
   0% {
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-    transform: translate(0, 0) scale(1) rotate(0deg);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
   33% {
-    border-radius: 70% 30% 52% 48% / 30% 60% 40% 70%;
-    transform: translate(8%, -8%) scale(1.08) rotate(120deg);
+    transform: translate3d(30px, -20px, 0) scale(1.06) rotate(120deg);
   }
   66% {
-    border-radius: 50% 50% 30% 70% / 60% 40% 70% 30%;
-    transform: translate(-5%, 5%) scale(0.92) rotate(240deg);
+    transform: translate3d(-20px, 20px, 0) scale(0.94) rotate(240deg);
   }
   100% {
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-    transform: translate(0, 0) scale(1) rotate(360deg);
+    transform: translate3d(0, 0, 0) scale(1) rotate(360deg);
   }
 }
 

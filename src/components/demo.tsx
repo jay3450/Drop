@@ -400,7 +400,7 @@ function LyricView({ lyrics, currentTime }: { lyrics: { text: string; start: num
           let fontWeight = '500';
           let opacity = 0.10;
           let color = '#b0b0b0';
-          let filter = 'blur(2px)';
+          let filter = 'none';
           let lineH = 1.2;
           let letterSp = '0px';
           let textShadow = 'none';
@@ -419,13 +419,17 @@ function LyricView({ lyrics, currentTime }: { lyrics: { text: string; start: num
             fontWeight = '700';
             opacity = 0.38;
             color = '#cccccc';
-            filter = 'blur(0.3px)';
+            filter = 'none';
+            lineH = 1.2;
+            letterSp = '0px';
           } else if (isFar) {
             fontSize = '17px';
             fontWeight = '600';
             opacity = 0.18;
             color = '#aaaaaa';
-            filter = 'blur(1px)';
+            filter = 'none';
+            lineH = 1.2;
+            letterSp = '0px';
           }
 
           return (
@@ -449,7 +453,7 @@ function LyricView({ lyrics, currentTime }: { lyrics: { text: string; start: num
                 lineHeight: lineH,
                 letterSpacing: letterSp,
                 textShadow,
-                transition: 'font-size 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.5s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease, letter-spacing 0.4s ease, color 0.4s ease',
+                transition: 'font-size 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.35s cubic-bezier(0.22,1,0.36,1), color 0.35s ease',
                 wordBreak: 'break-word',
               }}
             >
@@ -1409,7 +1413,7 @@ export function Demo() {
 
         {/* Browse Hub Tab */}
         {activeTab === 'browse' && (
-          <div className="flex-1 px-6 py-6" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center' }}>
+          <div className="flex-1 px-6 py-6 scrollbar-none w-full" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center', overflowY: 'auto', height: '100%' }}>
             <div className="mb-8">
               <h2 className="font-lyric-display font-extrabold text-3xl text-white mb-2">Explore Hub</h2>
               <p className="text-text-muted font-body-md text-sm">Curated micro-verses and smart AI-curated trends.</p>
@@ -1583,7 +1587,7 @@ export function Demo() {
 
         {/* Aux Tape Personal Library Tab */}
         {activeTab === 'library' && (
-          <div className="flex-1 px-6 py-6" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center' }}>
+          <div className="flex-1 px-6 py-6 scrollbar-none w-full" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center', overflowY: 'auto', height: '100%' }}>
             {/* Profile Header section */}
             <section className="mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-5">
               <div className="relative">
