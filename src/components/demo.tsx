@@ -659,17 +659,19 @@ export function Demo() {
     const clickedTrack = playlist[index];
     if (!clickedTrack) return;
 
+    const currentPlaylist = activePlaylist.length > 0 ? activePlaylist : TRACKS;
+
     if (playlist === TRACKS) {
       setActivePlaylist(TRACKS);
       setPendingPlay({ playlist: TRACKS, index });
     } else {
       // If playing a search result or saved song, insert it right after the current playing index in activePlaylist
-      const baseList = activePlaylist.length > 0 ? activePlaylist : TRACKS;
-      const newPlaylist = [...baseList];
+      const newPlaylist = [...currentPlaylist];
       
       const existingIdx = newPlaylist.findIndex(t => t.src === clickedTrack.src);
       if (existingIdx !== -1) {
-        setPendingPlay({ playlist: newPlaylist, index: existingIdx });
+        setActivePlaylist(currentPlaylist);
+        setPendingPlay({ playlist: currentPlaylist, index: existingIdx });
       } else {
         const currentIdx = player.state.currentIndex;
         const insertIdx = currentIdx + 1;
