@@ -882,12 +882,103 @@ export function Demo() {
     }, 2000);
   };
 
-  // Static assets are preloaded in web/index.html to ensure 0-lag and prevent FOUC.
+  // Dynamic asset injection (Tailwind configuration, Fonts, Icons)
+  const [tailwindReady, setTailwindReady] = useState(false);
 
-  // Show premium loading splash while INITIAL Deezer previews are fetching
-  if (previewsLoading) {
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (!document.getElementById('font-sora')) {
+        const link = document.createElement('link');
+        link.id = 'font-sora';
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&family=Hanken+Grotesk:wght@400;500;700&display=swap';
+        document.head.appendChild(link);
+      }
+
+      if (!document.getElementById('material-symbols')) {
+        const link = document.createElement('link');
+        link.id = 'material-symbols';
+        link.rel = 'stylesheet';
+        link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
+        document.head.appendChild(link);
+      }
+
+      if (!document.getElementById('tailwind-cdn')) {
+        const script = document.createElement('script');
+        script.id = 'tailwind-cdn';
+        script.src = 'https://cdn.tailwindcss.com?plugins=forms,container-queries';
+        script.onload = () => {
+          (window as any).tailwind.config = {
+            darkMode: 'class',
+            theme: {
+              extend: {
+                colors: {
+                  "crimson-orb": "rgba(255, 59, 48, 0.15)",
+                  "indigo-orb": "rgba(88, 86, 214, 0.15)",
+                  "smoky-glass": "rgba(255, 255, 255, 0.05)",
+                  "hairline-border": "rgba(255, 255, 255, 0.12)",
+                  "text-muted": "rgba(255, 255, 255, 0.60)",
+                  "on-surface": "#e2e2e2",
+                  "surface-container": "#1a1c1c",
+                  "surface-container-highest": "#333535",
+                  "background-deep": "#050505",
+                },
+                borderRadius: {
+                  "container-radius": "24px",
+                },
+                spacing: {
+                  "gutter-feed": "0px",
+                  "gutter-browse": "20px",
+                  "safe-bottom": "34px",
+                  "container-radius": "24px",
+                  "safe-top": "44px"
+                },
+                fontFamily: {
+                  "lyric-display": ["Sora", "sans-serif"],
+                  "headline-lg": ["Sora", "sans-serif"],
+                  "body-md": ["Hanken Grotesk", "sans-serif"],
+                  "metadata-sm": ["Hanken Grotesk", "sans-serif"],
+                  "label-caps": ["Hanken Grotesk", "sans-serif"]
+                }
+              }
+            }
+          };
+          setTailwindReady(true);
+        };
+        document.head.appendChild(script);
+      } else {
+        setTailwindReady(true);
+      }
+
+      // Inject global custom scroll and animation styles safely
+      if (!document.getElementById('drop-custom-styles')) {
+        const style = document.createElement('style');
+        style.id = 'drop-custom-styles';
+        style.innerHTML = `
+          @keyframes bounce { 0%, 80%, 100% { transform: scale(0) } 40% { transform: scale(1) } }
+          @keyframes heart-pop { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+          @keyframes ti-in { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+          .scrollbar-none::-webkit-scrollbar { display: none; }
+          .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+  }, []);
+
+  // Show premium loading splash while INITIAL Deezer previews are fetching and styles are configuring
+  if (previewsLoading || !tailwindReady) {
     return (
-      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-6" style={{ fontFamily: '"Sora", sans-serif' }}>
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: '#050505',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '24px',
+        fontFamily: '"Sora", sans-serif'
+      }}>
         <div style={{ fontSize: '32px', fontWeight: 800, color: '#fff', letterSpacing: '-1px' }}>DROP</div>
         <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
           {[0, 1, 2].map(i => (
@@ -898,7 +989,9 @@ export function Demo() {
             }} />
           ))}
         </div>
-        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', letterSpacing: '2px', textTransform: 'uppercase' }}>Loading previews…</p>
+        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', letterSpacing: '2px', textTransform: 'uppercase' }}>
+          {!tailwindReady ? 'Configuring styles...' : 'Loading previews...'}
+        </p>
       </div>
     );
   }
