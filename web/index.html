@@ -20,6 +20,54 @@
     <title>DROP — Music Feed</title>
     <meta name="description" content="DROP — Discover music in a beautiful, immersive feed. Stream chart-topping previews with synced lyrics." />
 
+    <!-- Google Fonts (Sora & Hanken Grotesk) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN & Custom Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              "crimson-orb": "rgba(255, 59, 48, 0.15)",
+              "indigo-orb": "rgba(88, 86, 214, 0.15)",
+              "smoky-glass": "rgba(255, 255, 255, 0.05)",
+              "hairline-border": "rgba(255, 255, 255, 0.12)",
+              "text-muted": "rgba(255, 255, 255, 0.60)",
+              "on-surface": "#e2e2e2",
+              "surface-container": "#1a1c1c",
+              "surface-container-highest": "#333535",
+              "background-deep": "#050505",
+            },
+            borderRadius: {
+              "container-radius": "24px",
+            },
+            spacing: {
+              "gutter-feed": "0px",
+              "gutter-browse": "20px",
+              "safe-bottom": "34px",
+              "container-radius": "24px",
+              "safe-top": "44px"
+            },
+            fontFamily: {
+              "lyric-display": ["Sora", "sans-serif"],
+              "headline-lg": ["Sora", "sans-serif"],
+              "body-md": ["Hanken Grotesk", "sans-serif"],
+              "metadata-sm": ["Hanken Grotesk", "sans-serif"],
+              "label-caps": ["Hanken Grotesk", "sans-serif"]
+            }
+          }
+        }
+      };
+    </script>
+
     <!-- Prevent tap highlight on mobile -->
     <style>
       * {
@@ -50,6 +98,13 @@
           overflow: hidden;
         }
       }
+
+      /* Custom animations and scroll utils */
+      @keyframes bounce { 0%, 80%, 100% { transform: scale(0) } 40% { transform: scale(1) } }
+      @keyframes heart-pop { 0% { transform: scale(0.5); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+      @keyframes ti-in { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+      .scrollbar-none::-webkit-scrollbar { display: none; }
+      .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
     <%- process.env.EXPO_PUBLIC_ENTRY_POINT ? '' : '' %>
