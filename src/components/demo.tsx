@@ -1456,7 +1456,7 @@ export function Demo() {
         {/* Browse Hub Tab */}
         {activeTab === 'browse' && (
           <div className="flex-1 px-6 py-6 scrollbar-none w-full" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center', overflowY: 'auto', height: '100%' }}>
-            <div className="mb-8">
+            <div className="mb-8 flex-shrink-0">
               <h2 className="font-lyric-display font-extrabold text-3xl text-white mb-2">Explore Hub</h2>
               <p className="text-text-muted font-body-md text-sm">Curated micro-verses and smart AI-curated trends.</p>
             </div>
@@ -1474,7 +1474,7 @@ export function Demo() {
             </div>
 
             {/* Always Visible Category Scroll Row */}
-            <div className="flex gap-2.5 overflow-x-auto pb-4 mb-6 scrollbar-none select-none w-full" style={{ display: 'flex', flexDirection: 'row', WebkitOverflowScrolling: 'touch' }}>
+            <div className="flex gap-2.5 overflow-x-auto py-2 mb-6 scrollbar-none select-none w-full flex-shrink-0" style={{ display: 'flex', flexDirection: 'row', WebkitOverflowScrolling: 'touch' }}>
               {['All', 'Bollywood', 'Punjabi', 'Hip-Hop', 'Pop', 'Phonk', 'Lo-Fi', 'EDM'].map((genre) => {
                 const isActive = (genre === 'All' && searchQuery === '') || (searchQuery.toLowerCase() === genre.toLowerCase());
                 return (
@@ -1639,7 +1639,7 @@ export function Demo() {
         {activeTab === 'library' && (
           <div className="flex-1 px-6 py-6 scrollbar-none w-full" style={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: '896px', marginLeft: 'auto', marginRight: 'auto', alignSelf: 'center', overflowY: 'auto', height: '100%' }}>
             {/* Profile Header section */}
-            <section className="mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-5">
+            <section className="mb-8 flex flex-col sm:flex-row items-center sm:items-end gap-5 flex-shrink-0">
               <div className="relative">
                 <div className="w-24 h-24 rounded-container-radius overflow-hidden border border-hairline-border">
                   <img
