@@ -1462,7 +1462,7 @@ export function Demo() {
             </div>
 
             {/* Minimalist Search Area */}
-            <div className="relative w-full group mb-8">
+            <div className="relative w-full group mb-6">
               <input
                 type="text"
                 placeholder="Search artists, tracks, or loops..."
@@ -1473,21 +1473,29 @@ export function Demo() {
               <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-white group-focus-within:w-full transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)]"></div>
             </div>
 
+            {/* Always Visible Category Scroll Row */}
+            <div className="flex gap-2.5 overflow-x-auto pb-4 mb-6 scrollbar-none select-none w-full" style={{ display: 'flex', flexDirection: 'row', WebkitOverflowScrolling: 'touch' }}>
+              {['All', 'Bollywood', 'Punjabi', 'Hip-Hop', 'Pop', 'Phonk', 'Lo-Fi', 'EDM'].map((genre) => {
+                const isActive = (genre === 'All' && searchQuery === '') || (searchQuery.toLowerCase() === genre.toLowerCase());
+                return (
+                  <button
+                    key={genre}
+                    onClick={() => setSearchQuery(genre === 'All' ? '' : genre)}
+                    className={`flex-shrink-0 px-5 py-2 rounded-full border text-xs font-bold uppercase transition-all duration-300 select-none ${
+                      isActive 
+                        ? 'bg-[#FF3B30] border-[#FF3B30] text-white shadow-[0_0_12px_rgba(255,59,48,0.4)] scale-105' 
+                        : 'border-hairline-border bg-smoky-glass text-white/70 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {genre}
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Curated view (only visible when search query is empty) */}
             {searchQuery.trim() === '' && (
               <>
-                {/* Scrollable Categories / Genre Chips */}
-                <div className="flex gap-2.5 overflow-x-auto pb-4 mb-6 scrollbar-thin select-none" style={{ display: 'flex', flexDirection: 'row' }}>
-                  {['All', 'Hyperpop', 'Drift Phonk', 'Neo-Soul', 'Glitch', 'Techno', 'Phonk'].map((genre, idx) => (
-                    <button
-                      key={genre}
-                      onClick={() => setSearchQuery(genre === 'All' ? '' : genre)}
-                      className="flex-shrink-0 px-5 py-2 rounded-full border text-xs font-bold uppercase transition-all duration-300 border-hairline-border bg-smoky-glass text-white hover:bg-white/10"
-                    >
-                      {genre}
-                    </button>
-                  ))}
-                </div>
 
                 {/* Masonry Grid representing Layout Schema 2 */}
                 <div className="grid grid-cols-2 gap-5">
